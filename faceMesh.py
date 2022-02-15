@@ -1,6 +1,6 @@
 import cv2
 import mediapipe as mp
-
+import math
 class FaceDetector:
     FACE = []
     def __init__(self,maxFaces=1,refinedDetection=False,mindetect=0.5,mintrack=0.5):
@@ -24,4 +24,11 @@ class FaceDetector:
     def getLandMarkOf(self,FACENO, LandmarkNum):  # FACE NO MEANS-> INDEX OF FACES,FIRST SECOND... FACE
         return self.FACE[FACENO][LandmarkNum]     # returns TUPLE OF COORDINATES e.g. you called getLandMarkOf(0,145) =>returns (100,100)
 
+    def findDistance(self,p1, p2):  # logic and code from cvZone (i copy pasted due to easy of this project , because initially i have used directly mediapipe's facemesh)
+        x1, y1 = p1
+        x2, y2 = p2
+        cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+        length = math.hypot(x2 - x1, y2 - y1)
+        return length,(cx, cy)
 
+        pass
