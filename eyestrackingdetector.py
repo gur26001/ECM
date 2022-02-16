@@ -17,14 +17,14 @@ class EyesTracker():
         leftEyeHeight = (leftEyeUpr[1], leftEyeDown[1])
         leftEyeWidth = (leftEyeLeft[0], leftEyeRight[0])
         leftEyeCrop = img[leftEyeHeight[0]:leftEyeHeight[1], leftEyeWidth[0]:leftEyeWidth[1]]
-        leftEyeCrop = cv2.resize(leftEyeCrop,(leftEyeWidth[1] - leftEyeWidth[0],leftEyeHeight[1] - leftEyeHeight[0]))
+        # leftEyeCrop = cv2.resize(leftEyeCrop,(leftEyeWidth[1] - leftEyeWidth[0],leftEyeHeight[1] - leftEyeHeight[0]))
 
         rightEyeUpr,rightEyeDown = self.detector.getLandMarkOf(0,223),self.detector.getLandMarkOf(0,230)
         rightEyeLeft,rightEyeRight=self.detector.getLandMarkOf(0,130),self.detector.getLandMarkOf(0,244)
         rightEyeHeight = (rightEyeUpr[1],rightEyeDown[1])
         rightEyeWidth =  (rightEyeLeft[0],rightEyeRight[0])
         rightEyeCrop= img[rightEyeHeight[0]:rightEyeHeight[1],rightEyeWidth[0]:rightEyeWidth[1]]
-        rightEyeCrop = cv2.resize(rightEyeCrop,(rightEyeWidth[1]-rightEyeWidth[0],rightEyeHeight[1]-rightEyeHeight[0]))
+        # rightEyeCrop = cv2.resize(rightEyeCrop,(rightEyeWidth[1]-rightEyeWidth[0],rightEyeHeight[1]-rightEyeHeight[0]))
 
         return leftEyeCrop,rightEyeCrop
     #######################################################################################
