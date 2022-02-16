@@ -7,6 +7,11 @@ import eyestrackingdetector as et
 cam = cv2.VideoCapture(0)
 detect = et.EyesTracker()
 
+Count=[0,0] #leftblinkcount,rightblinkcount
+flagl,flagr=0,0
+
+locLeft,locRight = np.array([]),np.array([])
+
 while True:
     st,img = cam.read()
     leftEye, rightEye = detect.Process(img)
@@ -33,12 +38,20 @@ while True:
     threshlodR = 0.69
     locRight = np.where(resRight >= threshlodR)
 
+    ptlc = 0
     for ptl in zip(*locLeft[::-1]):
         cv2.rectangle(leftEye, ptl, (ptl[0] + rw, ptl[1] + rh), (255,0 , 255), 2)
+        ptlc+=1
+        if (ptlc == 4):
+            Count[0] += 1
 
+    ptrc = 0
     for ptr in zip(*locRight[::-1]):
         cv2.rectangle(rightEye, ptr, (ptr[0] + rw, ptr[1] + rh), (0, 255, 255), 2)
+        ptrc+=1
 
+        if (ptrc==4):
+            Count[1] += 1
 
     #showing
     # cv2.imshow("Left eye", leftEye)
@@ -47,3 +60,6 @@ while True:
 
     if cv2.waitKey(1)== ord('q'):
         break
+
+
+print(Count)
