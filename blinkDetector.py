@@ -7,7 +7,9 @@ cam.set(4,480)
 
 detector = FM.FaceDetector(refinedDetection=True)
 
-rightList=[22,23,24,26,110,157,158,159,160,161,130,243]
+#upper outline, upper innerline, bottom innerline
+LEFT_EYE = [257,[398,384,385,386,387,388,466],[382,281,249,390,373,374,280]]
+rightList=[27,[246,161,160,159,158,157,173],[55,54,53,45,44,63,7]]
 # rightList = [33,7,163,144,145,153,154,155,133,173,157,158,159,160,161,246]
 count=0
 
@@ -19,8 +21,7 @@ def initBlinkState():
         imgRGB= cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
         detector.Process(imgRGB)
         rightUp = detector.getLandMarkOf(0,159)
-        rightDown = detector.getLandMarkOf(0,23)
-
+        rightDown = detector.getLandMarkOf(0,145)
 
     return rightUp[1],rightDown[1]
 
@@ -33,14 +34,15 @@ while cam.isOpened():
     # img= cv2.flip(img,1)
     imgRGB= cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     detector.Process(imgRGB)
-    # for i in rightList:
-    #     cv2.putText(img,f'{i}',detector.getLandMarkOf(0,i),cv2.FONT_HERSHEY_PLAIN,0.8,(0,255,0),1)
 
-    # rightUp =
-    # rightDown =
+
+    cv2.circle(img,detector.getLandMarkOf(0,386),1,(0,255,0),-1)
+    cv2.circle(img, detector.getLandMarkOf(0,374), 1, (0, 255, 255), -1)
+    # cv2.circle(img,detector.getLandMarkOf(0,159),1,(0,255,0),-1)
+    # cv2.circle(img, detector.getLandMarkOf(0, 145), 1, (0, 255, 255), -1)
 
     prevRightUppery, prevRightDowny = currRightUppery, currRightDowny
-    currRightUppery, currRightDowny = detector.getLandMarkOf(0,159)[1],detector.getLandMarkOf(0,23)[1]
+    currRightUppery, currRightDowny = detector.getLandMarkOf(0,159)[1],detector.getLandMarkOf(0,145)[1]
     # cv2.line(img,rightUp,rightDown,(0,255,0),2)
     # cv2.line(img, rightLeft, rightRight, (0, 255, 0), 2)
 
