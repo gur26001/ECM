@@ -14,7 +14,7 @@ locLeft,locRight = np.array([]),np.array([])
 
 while True:
     st,img = cam.read()
-    leftEye, rightEye = detect.Process(img)
+    leftEye, rightEye,leftEyeShape,rightEyeShape = detect.Process(img)
 
     ###capturing
     leftimggray = cv2.cvtColor(leftEye, cv2.COLOR_BGR2GRAY)
@@ -23,14 +23,19 @@ while True:
 
     ###getting training images/ templates to search for , blink detection jisse krna he  to compare
     lefteyetemp = cv2.imread("media/blinkDetection/train/lefteye2.png",0)
+    # lefteyetemp = cv2.resize(lefteyetemp,(leftEyeShape[0],leftEyeShape[1]))
+    cv2.imshow("lefteyetemp",lefteyetemp)
     lw,lh = lefteyetemp.shape[::-1]
-    righteyetemp = cv2.imread("media/blinkDetection/train/righteye2.jpg", 0)
-    rw, rh = righteyetemp.shape[::-1]
 
+    righteyetemp = cv2.imread("media/blinkDetection/train/righteye2.jpg", 0)
+    # righteyetemp = cv2.resize(righteyetemp, (rightEyeShape[0], rightEyeShape[1]))
+    rw, rh = righteyetemp.shape[::-1]
+    cv2.imshow("righteyetemp",righteyetemp)
 
     #recognition
 
     resLeft = cv2.matchTemplate(leftimggray,lefteyetemp,cv2.TM_CCOEFF_NORMED)
+
     threshlodL = 0.69
     locLeft = np.where(resLeft>=threshlodL)
 
@@ -38,28 +43,40 @@ while True:
     threshlodR = 0.69
     locRight = np.where(resRight >= threshlodR)
 
+
     ptlc = 0
     for ptl in zip(*locLeft[::-1]):
         cv2.rectangle(leftEye, ptl, (ptl[0] + rw, ptl[1] + rh), (255,0 , 255), 2)
         ptlc+=1
-        if (ptlc == 4):
+        if (ptlc==3):
             Count[0] += 1
+
 
     ptrc = 0
     for ptr in zip(*locRight[::-1]):
         cv2.rectangle(rightEye, ptr, (ptr[0] + rw, ptr[1] + rh), (0, 255, 255), 2)
         ptrc+=1
-
-        if (ptrc==4):
+        if (ptrc==3):
             Count[1] += 1
+            break
 
     #showing
-    # cv2.imshow("Left eye", leftEye)
-    # cv2.imshow("Right eye",rightEye)
+    cv2.imshow("Left eye", leftEye)
+    cv2.imshow("Right eye",rightEye)
     cv2.imshow("orignal",img)
 
     if cv2.waitKey(1)== ord('q'):
         break
+
+
+if (Count[0]>0):
+    if(Count[1]>0):
+        if(Count[0]>Count[1]):
+            Count[0]=2
+        else:
+            Count[0]=1
+    elif(Count[0]>4):
+        Count[0] = 2
 
 
 print(Count)
