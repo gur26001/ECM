@@ -12,9 +12,9 @@ class IrisDetector():
 
     IRISES=[]
     def __init__(self):
-        myFaceMesh = mp.solutions.face_mesh
+        self.myFaceMesh = mp.solutions.face_mesh
 
-    def process(self,img): #returns the coordinates of the both iris and their radiuses
+    def Process(self,img): #returns the coordinates of the both iris and their radiuses
         with self.myFaceMesh.FaceMesh(max_num_faces=1,refine_landmarks=True,min_detection_confidence=0.5,min_tracking_confidence=0.5) as facemesh :
             imgRGB= cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
             ih,iw,cg = img.shape #ignoring color channels to get width and height
@@ -30,4 +30,4 @@ class IrisDetector():
                 center_right = np.array([r_cx, r_cy], dtype=np.int32) #origin coordinates of right iris in int
 
                 self.IRISES.append((center_left,center_right,l_radius,r_radius))
-
+        return self.IRISES

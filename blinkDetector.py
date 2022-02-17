@@ -1,6 +1,6 @@
 #assuming initaily not blinked eye  or couldn't detect
-#before running you need to see in the middle of the screen  or couldn't detect
-#with glasses some errors may occur or couldn't detect
+    #before running you need to see in the middle of the screen  or couldn't detect
+    #with glasses some errors may occur or couldn't detect
 
 import cv2
 import numpy as np
