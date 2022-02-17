@@ -5,7 +5,7 @@ import pyautogui
 import math
 import faceMesh as FM
 import irisdetection as irisd
-
+import blinkDetector
 #########################################################################
 wCam,hCam= 640,480
 cam = cv2.VideoCapture(0)
