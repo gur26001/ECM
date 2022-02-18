@@ -159,9 +159,15 @@ if (initVs[5] != 0):
             print("RIGHT")
             cv2.putText(img, "RIGHT", (100, hScr - 200), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0))
         else:
-            pass
+            print("")
 
         # if up,then calculate according to left or right
+        if(initRightY>currRightY):
+            print("UP")
+        elif(initRightY<currRightY):
+            print("DOWN")
+        else:
+            print("")
 
         # if down,then calculate according to left or right
 
