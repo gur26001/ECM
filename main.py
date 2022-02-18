@@ -7,7 +7,6 @@
     #
 
 
-
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -86,27 +85,25 @@ def initVals():
         ############for calculation  of initial iris coordinates
         iIrisdetector = irisd.IrisDetector()
         iIRISES = iIrisdetector.Process(iimg)
-        intialValues[4] = (iIRISES[0][0],iIRISES[0][2]) #coordinates of left iris,left iris radius
-        intialValues[5] = (iIRISES[0][1],iIRISES[0][3]) # coordinates of right iris,right iris radius
+        intialValues[4] = (iIRISES[0],iIRISES[2]) #coordinates of left iris,left iris radius
+        intialValues[5] = (iIRISES[1],iIRISES[3]) # coordinates of right iris,right iris radius
 
 
     return intialValues
 ######################################
-# with myFaceMesh.FaceMesh(max_num_faces=1,refine_landmarks=True,min_detection_confidence=0.5,min_tracking_confidence=0.5) as facemesh :
 
 detector2= FM.FaceDetector(refinedDetection=True)
-
 initVs = initVals()
-
 
 initFaceDist= initVs[3]
 movedFaceDist=0
 f = 260
 W = 6.3
-pyautogui.moveTo(int(wScr/2),int(hScr/2))
+# pyautogui.moveTo(int(wScr/2),int(hScr/2))
 
-initLeftIris = initVs[4] #origin(x,y),radius
-initRightIris = initVs[5]  #origin(x,y),radius
+initLeftIrisPos = initVs[4][0] #origin(x,y)
+initRightIrisPos = initVs[5][0]  #origin(x,y)
+
 
 
 if (initVs[5] != 0):
@@ -114,136 +111,65 @@ if (initVs[5] != 0):
     while True:
         sat,img= cam.read()
         #########getting landmarks
-        img=cv2.flip(img,1)
+        # img=cv2.flip(img,1)
         imgRGB= cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
         ih,iw,cg = img.shape #ignoring color channels to get width and height
         detector2.Process(imgRGB)
 
         pointLeft = detector2.getLandMarkOf(0, 145)  # landmark for left eye
         pointRight = detector2.getLandMarkOf(0, 374)
+
         w,cs = findDistance(pointLeft,pointRight)
 
         currFaceDist= (W*f)/w
         # cv2.circle(img,leftIRISB,1, (255, 0, 255),1)
 
         irises = irisdetector.Process(img)
-        currLeftIris = (irises[0][0],irises[0][2])  #origin(x,y),radius
-        currRightIris = (irises[0][1],irises[0][3]) #origin(x,y),radius
+        currLeftIris = (irises[0],irises[2])  #origin(x,y),radius
+        currRightIris = (irises[1],irises[3]) #origin(x,y),radius
 
 
-        #right
-        if(isInc(initLeftIris[0][0],currLeftIris[0][0])):     #majorly x(horizontal coordinate)  is inc
-            movedFaceDist = currLeftIris[0][0]-initLeftIris[0][0]
-            cv2.putText(img, f'RIGHT, MOVED=>{movedFaceDist}', (50, 79), cv2.FONT_HERSHEY_PLAIN,2, (255, 0, 255))
+        #right => x inc
+        # if(initLeftIrisPos[0]<currLeftIris[0][0]):
+        # cv2.putText(img, f'iLeft :{initLeftIrisPos[0], initLeftIrisPos[1]}', (100, 20), cv2.FONT_HERSHEY_PLAIN, 2,(0,255, 0))
+        # cv2.putText(img, f'iRight :{initRightIrisPos[0], initRightIrisPos[1]}', (100, 50), cv2.FONT_HERSHEY_PLAIN, 2,(0,255,0))
 
-            theta1 = math.atan(movedFaceDist / initFaceDist)  # inverse of tan => atan in python in radians
-            #
-            estiFaceRemDis = math.tan(theta1 + 0.0349066) * currFaceDist
-            #
-            totald = movedFaceDist + estiFaceRemDis
-            if(pyautogui.position()[0]<wScr):
-                try:
-                    pyautogui.moveTo(pyautogui.position()[0]+totald, pyautogui.position()[1])
-                except:
-                    try:
-                        if pyautogui.position()[1] > hScr:
-                            pyautogui.moveTo(x=wScr,y=hScr-1)
-                        elif pyautogui.position()[1]<0:
-                            pyautogui.moveTo(x=wScr, y=1)
-                        else:
-                            pyautogui.moveTo(x=wScr,y=pyautogui.position()[1])
-                    except:
-                        print("move in the region")
+        initLeftX, initLeftY = np.interp(initLeftIrisPos[0], (0, wCam), (0, wScr)), np.interp(initLeftIrisPos[1],(0, hCam), (0, hScr))
+        initRightX, initRightY = np.interp(initRightIrisPos[0], (0, wCam), (0, wScr)), np.interp(initRightIrisPos[1],(0, hCam), (0, hScr))
+        cv2.putText(img, f'iLeft :{initLeftX, initLeftY}', (100, 20), cv2.FONT_HERSHEY_PLAIN, 2,(0,255, 0))
+        cv2.putText(img, f'iRight :{initRightX, initRightY}', (100, 50), cv2.FONT_HERSHEY_PLAIN, 2,(0,255,0))
 
+        # cv2.putText(img,f'Left :{currLeftIris[0][0],currLeftIris[0][1]}',(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
+        # cv2.putText(img, f'Right :{currRightIris[0][0], currRightIris[0][1]}', (100, 200), cv2.FONT_HERSHEY_PLAIN, 2,(255, 0, 255))
 
-        # left
+        currLeftX,currLeftY =  np.interp(currLeftIris[0][0],(0,wCam),(0,wScr)), np.interp(currLeftIris[0][1],(0,hCam),(0,hScr))
+        currRightX, currRightY = np.interp(currRightIris[0][0], (0, wCam), (0, wScr)), np.interp(currRightIris[0][1],(0, hCam), (0, hScr))
+        cv2.putText(img,f'Left :{currLeftX,currLeftY}',(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
+        cv2.putText(img, f'Right :{currRightX, currRightY}', (100, 200), cv2.FONT_HERSHEY_PLAIN, 2,(255, 0, 255))
 
-        elif(isDec(initLeftIris[0][0],currLeftIris[0][0])):                   #majorly x(vertical coordinate)  is dec
-            movedFaceDist = currLeftIris[0][0] - initLeftIris[0][0]
-            cv2.putText(img,  f'LEFT, MOVED=>{movedFaceDist}', (51, 81), cv2.FONT_HERSHEY_PLAIN,2, (255, 0, 255))
-
-            theta1 = math.atan(movedFaceDist / initFaceDist)  # inverse of tan => atan in python in radians
-            #
-            estiFaceRemDis = math.tan(theta1 + 0.0349066) * currFaceDist
-            #
-            totald=movedFaceDist+estiFaceRemDis
-            #
-            if (pyautogui.position()[0] >0):
-                try:
-                    pyautogui.moveTo(totald-pyautogui.position()[0], pyautogui.position()[1])
-                except:
-                    try:
-                        if pyautogui.position()[1] > hScr:
-                            pyautogui.moveTo(x=0,y=hScr-1)
-                        elif pyautogui.position()[1]<0:
-                            pyautogui.moveTo(x=0, y=1)
-                        else:
-                            pyautogui.moveTo(x=0,y=pyautogui.position()[1])
-                    except:
-                        print("move in the region")
-
-    #
+        #if left,then calculate according to left|right             DIST=RIGHT,DETECT=LEFT          x dec       write opp because it shows fliped image
+        if(int(initLeftX)<int(currLeftX)):
+            print("LEFT")
+            cv2.putText(img, "LEFT", (100, hScr-100), cv2.FONT_HERSHEY_PLAIN, 2,(0, 255,0))
+        # else:
+        #     pass
+        # if right,then calculate according to left|right            DIST=LEFT,DETECT=RIGHT         x inc     write opp because it shows fliped image
+        # if(initLeftIrisPos[0]<currLeftIris[0][0]):
+        elif(int(initLeftX)>int(currLeftX)):
+            print("RIGHT")
+            cv2.putText(img, "RIGHT", (100, hScr - 200), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0))
         else:
             pass
 
-        # down
-        if(isInc(initLeftIris[0][1],currLeftIris[0][1])):      #majorly y(vertical coordinate)  is inc
-            movedFaceDist =currLeftIris[0][1] - initLeftIris[0][1]
-            cv2.putText(img,  f'DOWN, MOVED=>{movedFaceDist}', (53, 203), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255))
+        # if up,then calculate according to left or right
 
-            theta1 = math.atan(movedFaceDist / initFaceDist)  # inverse of tan => atan in python in radians
-            #
-            estiFaceRemDis = math.tan(theta1 + 0.0349066) * currFaceDist
-            totald = movedFaceDist + estiFaceRemDis
-            if (pyautogui.position()[1] < hScr):
-                try:
-                    pyautogui.moveTo(pyautogui.position()[0],totald+pyautogui.position()[1])
-                except:
-                    try:
-                        if pyautogui.position()[0] > wScr:
-                            pyautogui.moveTo(x=wScr-1, y=hScr)
-                        elif pyautogui.position()[0] < 0:
-                            pyautogui.moveTo(x=1, y=hScr)
-                        else:
-                            pyautogui.moveTo(x=pyautogui.position()[0], y=hScr)
-                    except:
-                        print("move in the region")
+        # if down,then calculate according to left or right
 
-        elif(isDec(initLeftIris[0][1],currLeftIris[0][1])):                      #majorly y(vertical coordinate)  is dec
-            movedFaceDist = currLeftIris[0][1] - initLeftIris[0][1]
-            cv2.putText(img, f'UP, MOVED=>{movedFaceDist}', (52, 102), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255))
-
-            theta1 = math.atan(movedFaceDist / initFaceDist)  # inverse of tan => atan in python in radians
-            #
-            estiFaceRemDis = math.tan(theta1 + 0.0349066) * currFaceDist
-            totald = movedFaceDist + estiFaceRemDis
-            if (pyautogui.position()[1] >   0):
-                try:
-                    pyautogui.moveTo(pyautogui.position()[0], totald-pyautogui.position()[1])
-                except:
-                    try:
-                        if pyautogui.position()[0] > wScr:
-                            pyautogui.moveTo(x=wScr-1, y=0)
-                        elif pyautogui.position()[0] < 0:
-                            pyautogui.moveTo(x=1, y=0)
-                        else:
-                            pyautogui.moveTo(x=pyautogui.position()[0], y=0)
-                    except:
-                        print("move in the region")
-
-        else:
-            pass
-
-
-        # irisx=leftIRISB[0]    #assumed both eyes are right(move simultaneously except eye disease of unbalanced eye movement)=>we are getting coordinates of one of the eye
-        # irisy=leftIRISB[1]
-        #
-        # tx= np.interp(irisx,(0,wCam),(0,wScr))
-        # ty= np.interp(irisy,(0,hCam),(0,hScr))
-        #
-        # pyautogui.moveTo(tx+100, ty+100)
-
+        # else:
+        #     pass
         #########
+
+
         cv2.imshow("img",img)
         # cv2.imshow("fliped",fliped)
 
