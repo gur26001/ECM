@@ -14,6 +14,7 @@ class IrisDetector():
     def __init__(self):
         self.myFaceMesh = mp.solutions.face_mesh
         self.facemesh = self.myFaceMesh.FaceMesh(max_num_faces=1, refine_landmarks=True, min_detection_confidence=0.5,min_tracking_confidence=0.5)
+        self.center_left, self.center_right, self.l_radius, self.r_radius = -1,-1,-1,-1
     def Process(self,img): #returns the coordinates of the both iris and their radiuses
         imgRGB= cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
         ih,iw,cg = img.shape #ignoring color channels to get width and height
