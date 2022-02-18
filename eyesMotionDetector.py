@@ -25,13 +25,22 @@ def initialState():
         rightEyeDis, _ = cf.findDistance(rightEyeCorner, rightIrisCorner)
         print(rightEyeDis)
 
+        leftEyeShadowUpper = detector.getLandMarkOf(0, 257)
+        leftEyeShadowDown = detector.getLandMarkOf(0, 386)
+        leftEyeShadowDistBtw, _ = cf.findDistance(leftEyeShadowUpper, leftEyeShadowDown)
+
+        rightEyeShadowUpper = detector.getLandMarkOf(0, 27)
+        rightEyeShadowDown = detector.getLandMarkOf(0, 159)
+        rightEyeShadowDistBtw, _ = cf.findDistance(leftEyeShadowUpper, leftEyeShadowDown)
+
         cv2.imshow("img", img)
         if (cv2.waitKey(1) == ord('q')):
             break
-    return (leftEyeDis,rightEyeDis)
+    return [(leftEyeDis,rightEyeDis),(leftEyeShadowDistBtw,rightEyeShadowDistBtw)]
 
 
 initVals= initialState()
+
 while True:
     st,img = cam.read()
 
@@ -63,14 +72,31 @@ while True:
     rightEyeDis,_ = cf.findDistance(rightEyeCorner,rightIrisCorner)
     print(rightEyeDis)
 
+    leftEyeShadowUpper = detector.getLandMarkOf(0, 257)
+    leftEyeShadowDown = detector.getLandMarkOf(0, 386)
+    leftEyeShadowDistBtw,_ = cf.findDistance(leftEyeShadowUpper,leftEyeShadowDown)
 
 
-    if(initVals[0]>leftEyeDis): #left
+    rightEyeShadowUpper = detector.getLandMarkOf(0, 27)
+    rightEyeShadowDown = detector.getLandMarkOf(0, 159)
+    rightEyeShadowDistBtw,_ = cf.findDistance(leftEyeShadowUpper,leftEyeShadowDown)
+
+
+
+    if(initVals[0][0]>leftEyeDis): #left
         cv2.putText(img,"LEFT",(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
-
-    if(initVals[1]>rightEyeDis): #right
+    else:
+        pass
+    if(initVals[0][1]>rightEyeDis): #right
         cv2.putText(img,"RIGHT",(100,200),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
+    else:
+        pass
+    if(initVals[1][0]>leftEyeShadowDistBtw and initVals[1][1]>rightEyeShadowDistBtw):#up
+        cv2.putText(img, "UP", (100, 150), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255))
+    else:
+        pass
 
+    #down ka issue ki vo kahi blink na krde vali situation
 
     cv2.imshow("img",img)
     if(cv2.waitKey(1)==ord('q')):
