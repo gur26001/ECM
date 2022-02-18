@@ -91,13 +91,16 @@ while True:
         cv2.putText(img,"RIGHT",(100,200),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
     else:
         pass
-    if(initVals[1][0]>leftEyeShadowDistBtw and initVals[1][1]>rightEyeShadowDistBtw):#up
+    if(initVals[1][0]>leftEyeShadowDistBtw and initVals[1][1]>rightEyeShadowDistBtw):#up            one issue if person is shocked then it will detect as up
         cv2.putText(img, "UP", (100, 150), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255))
     else:
         pass
 
     #down ka issue ki vo kahi blink na krde vali situation
-
+    if(initVals[1][0]<leftEyeShadowDistBtw and initVals[1][1]<rightEyeShadowDistBtw):
+        cv2.putText(img, "DOWN", (100, 250), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255))
+    else:
+        pass
     cv2.imshow("img",img)
     if(cv2.waitKey(1)==ord('q')):
         break
