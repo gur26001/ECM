@@ -12,7 +12,7 @@ import mediapipe as mp
 import numpy as np
 import pyautogui
 import keyboard
-
+import math
 import faceMesh
 import irisdetection as irisd
 import distanceDetector
@@ -46,6 +46,13 @@ mouseInitialValues = (int(hScr/2),int(wScr/2))
 ##############################################################
 pyautogui.moveTo(mouseInitialValues[0],mouseInitialValues[1])
 
+
+def findDistance(self, p1, p2,img=None):  # logic and code from cvZone (i copy pasted due to easy of this project , because initially i have used directly mediapipe's facemesh)
+    x1, y1 = p1
+    x2, y2 = p2
+    cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+    length = math.hypot(x2 - x1, y2 - y1)
+    return length, (cx, cy)
 
 
 def initVals():
@@ -106,7 +113,7 @@ while True:
     # cv2.putText(img, f'iLeft :{initLeftIrisPos[0], initLeftIrisPos[1]}', (100, 20), cv2.FONT_HERSHEY_PLAIN, 2,(0,255, 0))
     # cv2.putText(img, f'iRight :{initRightIrisPos[0], initRightIrisPos[1]}', (100, 50), cv2.FONT_HERSHEY_PLAIN, 2,(0,255,0))
 
-    initMidX, initMidY = np.interp(initMidpointCr[0], (0, wCam), (0, wScr)), np.interp(initMidpointCr[1],(0, hCam), (0, hScr))
+    initMidX, initMidY = np.interp(initMidpointCr[0], (0, wCam), (0, wScr)), np.interp(initLeftIrisPos[1],(0, hCam), (0, hScr))
 
     initLeftX, initLeftY = np.interp(initLeftIrisPos[0], (0, wCam), (0, wScr)), np.interp(initLeftIrisPos[1], (0, hCam),(0, hScr))
     initRightX, initRightY = np.interp(initRightIrisPos[0], (0, wCam), (0, wScr)), np.interp(initRightIrisPos[1],(0, hCam), (0, hScr))
@@ -116,10 +123,10 @@ while True:
     # cv2.putText(img,f'Left :{currLeftIris[0][0],currLeftIris[0][1]}',(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
     # cv2.putText(img, f'Right :{currRightIris[0][0], currRightIris[0][1]}', (100, 200), cv2.FONT_HERSHEY_PLAIN, 2,(255, 0, 255))
 
-    currMidX,currMidY =  np.interp(currMidpointCr[0],(0,wCam),(0,wScr)), np.interp(currMidpointCr[1],(0,hCam),(0,hScr))
+    currMidX,currMidY =  np.interp(currMidpointCr[0],(0,wCam),(0,wScr)), np.interp(currLeftIris[0][1],(0,hCam),(0,hScr))
 
-    currLeftX, currLeftY = np.interp(currLeftIris[0][0], (0, wCam), (0, wScr)), np.interp(currLeftIris[0][1], (0, hCam),(0, hScr))
-    currRightX, currRightY = np.interp(currRightIris[0][0], (0, wCam), (0, wScr)), np.interp(currRightIris[0][1],(0, hCam), (0, hScr))
+    currLeftX, currLeftY =  np.interp(currLeftIris[0][0], (0, wCam), (0, wScr)), np.interp(currLeftIris[0][1] ,(0, hCam),(0, hScr))
+    currRightX, currRightY = np.interp(currRightIris[0][0], (0, wCam), (0, wScr)),np.interp(currRightIris[0][1], (0, wCam), (0, wScr))
     # cv2.putText(img,f'Left :{currMidX,currMidY}',(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
     # cv2.putText(img, f'Right :{currRightX, currRightY}', (100, 200), cv2.FONT_HERSHEY_PLAIN, 2,(255, 0, 255))
 
@@ -127,12 +134,14 @@ while True:
     #to do later irisMidpointY = (currMidY+currRightY)//2
 
    #if left,then calculate according to left|right             DIST=LEFT,DETECT=LEFT          x dec       write opp because it shows fliped image
-    if(int(initMidX)<int(currMidX)):
+    if((initLeftX)<(currLeftX)):
+        # movedFaceDist = findDistance((currLeftX,currLeftY),(initLeftX,initLeftY))
         print("LEFT")
 
     # if right,then calculate according to left|right            DIST=RIGHT,DETECT=RIGHT         x inc     write opp because it shows fliped image
 
-    elif(int(initMidX)>int(currMidX)):
+    elif((initRightX)>(currRightX)):
+        # movedFaceDist = findDistance(currLeftIris[0], initLeftIrisPos)
         print("RIGHT")
 
     else:
@@ -140,9 +149,9 @@ while True:
 
     # if up,then calculate according to left or right
 
-    if(initLeftY>currLeftY):
+    if(initMidY>currMidY):
         print("UP")
-    elif(initLeftY<currLeftY):
+    elif(initMidY<currMidY):
         print("DOWN")
     else:
         print("")
