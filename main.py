@@ -94,9 +94,10 @@ irisdetector = irisd.IrisDetector()
 
 
 distancedetector = distanceDetector.DistanceDetector()
-while True:
+while cam.isOpened():
     sat,img= cam.read()
     ih, iw, cg = img.shape  # ignoring color channels to get width and height
+
     #########getting landmarks
 
     irises = irisdetector.Process(img)
@@ -113,20 +114,20 @@ while True:
     # cv2.putText(img, f'iLeft :{initLeftIrisPos[0], initLeftIrisPos[1]}', (100, 20), cv2.FONT_HERSHEY_PLAIN, 2,(0,255, 0))
     # cv2.putText(img, f'iRight :{initRightIrisPos[0], initRightIrisPos[1]}', (100, 50), cv2.FONT_HERSHEY_PLAIN, 2,(0,255,0))
 
-    initMidX, initMidY = np.interp(initMidpointCr[0], (0, wCam), (0, wScr)), np.interp(initLeftIrisPos[1],(0, hCam), (0, hScr))
+    initMidX, initMidY = np.interp(initMidpointCr[0], (0, wCam), (0, wScr)), np.interp(initMidpointCr[1],(0, hCam), (0, hScr))
 
-    initLeftX, initLeftY = np.interp(initLeftIrisPos[0], (0, wCam), (0, wScr)), np.interp(initLeftIrisPos[1], (0, hCam),(0, hScr))
-    initRightX, initRightY = np.interp(initRightIrisPos[0], (0, wCam), (0, wScr)), np.interp(initRightIrisPos[1],(0, hCam), (0, hScr))
+    initLeftX, initLeftY = initLeftIrisPos[0],initLeftIrisPos[1]
+    initRightX, initRightY =initRightIrisPos[0], initRightIrisPos[1]
     # cv2.putText(img, f'iLeft :{initMidX, initMidY}', (100, 20), cv2.FONT_HERSHEY_PLAIN, 2,(0,255, 0))
     # cv2.putText(img, f'iRight :{initRightX, initRightY}', (100, 50), cv2.FONT_HERSHEY_PLAIN, 2,(0,255,0))
 
     # cv2.putText(img,f'Left :{currLeftIris[0][0],currLeftIris[0][1]}',(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
     # cv2.putText(img, f'Right :{currRightIris[0][0], currRightIris[0][1]}', (100, 200), cv2.FONT_HERSHEY_PLAIN, 2,(255, 0, 255))
 
-    currMidX,currMidY =  np.interp(currMidpointCr[0],(0,wCam),(0,wScr)), np.interp(currLeftIris[0][1],(0,hCam),(0,hScr))
+    currMidX,currMidY =  np.interp(currMidpointCr[0],(0,wCam),(0,wScr)), np.interp(currMidpointCr[1],(0,hCam),(0,hScr))
 
-    currLeftX, currLeftY =  np.interp(currLeftIris[0][0], (0, wCam), (0, wScr)), np.interp(currLeftIris[0][1] ,(0, hCam),(0, hScr))
-    currRightX, currRightY = np.interp(currRightIris[0][0], (0, wCam), (0, wScr)),np.interp(currRightIris[0][1], (0, wCam), (0, wScr))
+    currLeftX, currLeftY =  currLeftIris[0][0], currLeftIris[0][1]
+    currRightX, currRightY = currRightIris[0][0], currRightIris[0][1]
     # cv2.putText(img,f'Left :{currMidX,currMidY}',(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
     # cv2.putText(img, f'Right :{currRightX, currRightY}', (100, 200), cv2.FONT_HERSHEY_PLAIN, 2,(255, 0, 255))
 
@@ -134,14 +135,14 @@ while True:
     #to do later irisMidpointY = (currMidY+currRightY)//2
 
    #if left,then calculate according to left|right             DIST=LEFT,DETECT=LEFT          x dec       write opp because it shows fliped image
-    if((initLeftX)<(currLeftX)):
-        # movedFaceDist = findDistance((currLeftX,currLeftY),(initLeftX,initLeftY))
+    if((initLeftX)<(currLeftX) or (initRightX)<(currRightX) ):    #LEFT X DEC
+
         print("LEFT")
 
     # if right,then calculate according to left|right            DIST=RIGHT,DETECT=RIGHT         x inc     write opp because it shows fliped image
 
-    elif((initRightX)>(currRightX)):
-        # movedFaceDist = findDistance(currLeftIris[0], initLeftIrisPos)
+    elif((initLeftX)>(currLeftX) or (initRightX)>(currRightX) ): #RIGHT X INC
+        # pyautogui.move(0,movedFaceDist+estimatedDist)
         print("RIGHT")
 
     else:
@@ -149,9 +150,9 @@ while True:
 
     # if up,then calculate according to left or right
 
-    if(initMidY>currMidY):
+    if((initLeftY)>(currLeftY) or (initRightY)>(currRightY) ): #UP Y DEC
         print("UP")
-    elif(initMidY<currMidY):
+    elif((initLeftY)<(currLeftY) or (initRightY)<(currRightY) ): #DOWN Y INC
         print("DOWN")
     else:
         print("")
