@@ -78,13 +78,16 @@ while True:
     # right -> distance b/w eye corner point in direction of the eye outside corner
 
 
-##################detection of the mid of the nose to get the reference line for left and right angle
-
+##################For detection of the mid of the nose to get the reference line for left and right angle
     centerofnose= detector.getLandMarkOf(0,168)
     cv2.circle(img,centerofnose,2,(0,0,255),-1)
 ########################################################################################
+###################For detection of the up and down
 
-    #down->blinkdetector use
+
+########################################################################################
+
+
     leftIrisCorner = detector.getLandMarkOf(0,474 ) #jisto use krke dist find krna
     leftEyeCorner = detector.getLandMarkOf(0,263)
     leftEyeDis,_ = cf.findDistance(leftIrisCorner,leftEyeCorner)
@@ -110,6 +113,13 @@ while True:
 
     resiris = irisdetector.Process(img)
 
+    cv2.circle(img,resiris[0],2,(0,0,255),-1)
+    cv2.circle(img, resiris[1], 2, (0, 0, 255), -1)
+
+
+    _,eyeshadowdown = cf.findDistance(leftEyeShadowDown,rightEyeShadowDown)
+    cv2.putText(img,f'{eyeshadowdown}',(eyeshadowdown[0]-10,eyeshadowdown[1]-10),cv2.FONT_HERSHEY_PLAIN,1,(0,255,255))
+    cv2.circle(img,eyeshadowdown,5,(255,0,255),-1)
 
     # rightIrisDis = format((cf.findDistance(resiris[1],valright)[0]),".2f")
     # cv2.putText(img,f'dist{rightIrisDis}',(resiris[1][0]-10,resiris[1][1]-5),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0),1)
