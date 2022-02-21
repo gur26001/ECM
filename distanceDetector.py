@@ -8,7 +8,7 @@ class DistanceDetector():
     def __init__(self):
         self.detector = FM.FaceDetector(refinedDetection=True)
         self.f = 260    #focal length of camera
-        self.W = 6.3   #avg distance between eyes
+        self.W = 11.9   #avg The distance from the outer corners of the eyes (right and left ectocanthi)
         self.irisdetector = irisd.IrisDetector()
     def findDistance(self,p1, p2,img=None):  # logic and code from cvZone (i copy pasted due to easy of this project , because initially i have used directly mediapipe's facemesh)
         x1, y1 = p1
@@ -24,11 +24,11 @@ class DistanceDetector():
         self.detector.Process(imgRGB)
         irises = self.irisdetector.Process(img)
 
-        pointLeft = irises[0]  # landmark for left iris
-        pointRight = irises[1]
+        pointLeft = self.detector.getLandMarkOf(0,263) #irises[0]  # landmark for left iris
+        pointRight =self.detector.getLandMarkOf(0,33) #irises[1]
 
         w, cs = self.findDistance(pointLeft, pointRight)
 
         currFaceDist = (self.W * self.f) / w
 
-        return currFaceDist,cs
+        return currFaceDist,(pointLeft,pointRight)

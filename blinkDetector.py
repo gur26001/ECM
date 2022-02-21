@@ -20,7 +20,7 @@ def initialState():
 
         ileftEyeShadowDist = ileftupperdown[1] - ileftupperupper[1]
 
-        # ileftdownupper = idetector.getLandMarkOf(0, 374)
+        ileftdownupper = idetector.getLandMarkOf(0, 374)
         # ileftUpperLidLowerLidDist = ileftdownupper[1] - ileftupperdown[1]
 
         irightupperupper = idetector.getLandMarkOf(0, 27)
@@ -28,10 +28,10 @@ def initialState():
 
         irightEyeShadowDist = irightupperdown[1] - irightupperupper[1]
 
-        # irightdownupper = idetector.getLandMarkOf(0, 145)
+        irightdownupper = idetector.getLandMarkOf(0, 145)
         # irightUpperLidLowerLidDist = irightdownupper[1] - irightupperdown[1]
 
-        return (ileftEyeShadowDist, irightEyeShadowDist)
+        return (ileftEyeShadowDist, irightEyeShadowDist,ileftdownupper,irightdownupper)
 
 
 class BlinkDetector():
@@ -78,13 +78,15 @@ class BlinkDetector():
 
         #LEFT EYE BLINK DETECTION
         prevl = self.initialVals[0]
-        if((prevl<leftEyeShadowDist) and (leftUpperLidLowerLidDist in self.eyeblinkedDiffRange)):
+        prevldu = self.initialVals[2]
+        if((prevl<leftEyeShadowDist) and (leftUpperLidLowerLidDist in self.eyeblinkedDiffRange) and (leftdownupper[1]<prevldu[1]) ):
             # cv2.putText(img,"Left Blinked",(10,10),cv2.FONT_HERSHEY_PLAIN,2,(0,255,0))
             self.Count[0] += 1
 
         #RIGHT EYE BLINK DETECTION
         prevr= self.initialVals[1]
-        if ((prevr<rightEyeShadowDist) and (rightUpperLidLowerLidDist in self.eyeblinkedDiffRange)):
+        prevrdu = self.initialVals[3]
+        if ((prevr<rightEyeShadowDist) and (rightUpperLidLowerLidDist in self.eyeblinkedDiffRange and (rightdownupper[1]<prevrdu[1]))):
             # cv2.putText(img, "Right Blinked", (10, 80), cv2.FONT_HERSHEY_PLAIN, 2, (255,0,255))
             self.Count[1] += 1
 
