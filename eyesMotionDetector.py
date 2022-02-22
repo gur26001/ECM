@@ -98,7 +98,7 @@ while True:
     _,eyeshadowdown = cf.findDistance(leftEyeShadowDown,rightEyeShadowDown)
 
 
-###############3eyes movement detection
+###############eyes movement detection
     if(initVals["EyeDistances"][0]>leftEyeDis): #left
         cv2.putText(img,f'LEFT{initVals["EyeDistances"][0]-leftEyeDis}',(100,100),cv2.FONT_HERSHEY_PLAIN,2,(255,0,255))
     else:
@@ -130,17 +130,13 @@ while True:
      #
     #</face distance>#
 
-    #####distance from nosemid to iris of both eyes individually
+#####distance from nosemidpoint(reference point) to iris of both eyes individually
     movedDist, _ = cf.findDistance(nosemidpointCr, eyeshadowdown)
     cv2.line(img, resiris[1], nosemidpointCr, (0, 255, 0))
     cv2.line(img, resiris[0], nosemidpointCr, (0, 255, 0))
 
-    ##################angle between reference line 13 and iris center, for left and right eye
-
-
-
     # left eye angle from reference line
-    leftirisdisfromnosemid, _ = cf.findDistance(resiris[0],centerofnose)
+    leftirisdisfromnosemid, _ = cf.findDistance(resiris[0],nosemidpointCr)
     # cv2.circle(img, _, 2, (255, 0, 0), -1)
     ltantheta = (leftirisdisfromnosemid / eyestobackheaddistance)
     estimatedLDist = int(ltantheta*(eyestobackheaddistance+currFaceDist)) #cm
@@ -148,7 +144,7 @@ while True:
     print("LEFT ESTIMATED",ltantheta," ",estimatedLDist)
 
     # right eye angle from reference line
-    rightirisdisfromnosemid, _ = cf.findDistance(resiris[1],centerofnose)
+    rightirisdisfromnosemid, _ = cf.findDistance(resiris[1],nosemidpointCr)
     # cv2.circle(img,_,2,(255,0,0),-1)
     rtantheta = (rightirisdisfromnosemid / eyestobackheaddistance)
     estimatedRDist = int(rtantheta * (eyestobackheaddistance + currFaceDist))
