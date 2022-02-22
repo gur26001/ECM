@@ -2,6 +2,7 @@ import cv2
 import faceMesh as FM
 import math
 import irisdetection as irisd
+import commonfile as cf
 
 class DistanceDetector():
 
@@ -24,10 +25,10 @@ class DistanceDetector():
         self.detector.Process(imgRGB)
         irises = self.irisdetector.Process(img)
 
-        pointLeft = self.detector.getLandMarkOf(0,263) #irises[0]  # landmark for left iris
-        pointRight =self.detector.getLandMarkOf(0,33) #irises[1]
+        pointLeft = cf.findDistance(self.detector.getLandMarkOf(0,173),self.detector.getLandMarkOf(0,133))
+        pointRight =cf.findDistance(self.detector.getLandMarkOf(0,398), self.detector.getLandMarkOf(0,362))
 
-        w, cs = self.findDistance(pointLeft, pointRight)
+        w, cs = self.findDistance(pointLeft, pointRight) #exact between face
 
         currFaceDist = (self.W * self.f) / w
 
