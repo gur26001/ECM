@@ -4,7 +4,10 @@ wScr,hScr= pyautogui.size() #getting size of the window
 
 def moveRight(estimatedDist):
     try:
-        pyautogui.moveTo(pyautogui.position()[0]+estimatedDist, pyautogui.position()[1])
+        if(pyautogui.position()[0]>=0 and pyautogui.position()[0]<wScr):
+            pyautogui.moveTo(pyautogui.position()[0]+estimatedDist, pyautogui.position()[1])
+        else:
+            pyautogui.moveTo(0,0)
     except:
         try:
             if pyautogui.position()[1] > hScr:
@@ -18,7 +21,10 @@ def moveRight(estimatedDist):
 
 def moveLeft(estimatedDist):
     try:
-        pyautogui.moveTo(estimatedDist-pyautogui.position()[0], pyautogui.position()[1])
+        if(pyautogui.position()[0]>=0 and pyautogui.position()[0]<wScr):
+            pyautogui.moveTo(estimatedDist-pyautogui.position()[0], pyautogui.position()[1])
+        else:
+            pyautogui.moveTo(0,0)
     except:
         try:
             if pyautogui.position()[1] > hScr:
@@ -33,7 +39,10 @@ def moveLeft(estimatedDist):
     pass
 def moveUp(estimatedDist):
     try:
-        pyautogui.moveTo(pyautogui.position()[0], estimatedDist-pyautogui.position()[1])
+        if(pyautogui.position()[1]>=0 and pyautogui.position()[1]<hScr):
+            pyautogui.moveTo(pyautogui.position()[0], estimatedDist-pyautogui.position()[1])
+        else:
+            pyautogui.position(0,0)
     except:
         try:
             if pyautogui.position()[0] > wScr:
@@ -48,7 +57,10 @@ def moveUp(estimatedDist):
 
 def moveDown(estimatedDist):
     try:
+        if (pyautogui.position()[1] >= 0 and pyautogui.position()[1] < hScr):
             pyautogui.moveTo(pyautogui.position()[0],estimatedDist+pyautogui.position()[1])
+        else:
+            pyautogui.moveTo(0,0)
     except:
         try:
             if pyautogui.position()[0] > wScr:
