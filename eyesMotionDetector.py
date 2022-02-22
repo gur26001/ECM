@@ -46,23 +46,6 @@ while True:
     detector.Process(img)
 
 
-##################For detection of the mid of the nose to get the reference line for left and right angle
-    centerofnose= detector.getLandMarkOf(0,168)
-    # cv2.circle(img,centerofnose,2,(0,0,255),-1)
-# ########################################################################################
-#     leftmidp, leftmidpCr =cf.findDistance(detector.getLandMarkOf(0,173),detector.getLandMarkOf(0,133))
-#     # cv2.circle(img,leftmidpCr,3,(122,185,135))
-#
-#     rightmidp, rightmidpCr = cf.findDistance(detector.getLandMarkOf(0,398),detector.getLandMarkOf(0,362))
-#     # cv2.circle(img, rightmidpCr, 3, (122, 185, 135))
-#
-#     nosemidpoint,nosemidpointCr = cf.findDistance(leftmidpCr,rightmidpCr)
-    # cv2.circle(img,nosemidpointCr,3,(255,0,255),1)
-
-
-    ###################For detection of the up and down
-
-
 ########################################################################################
 
 
@@ -110,7 +93,7 @@ while True:
     # up
     if(initVals["EyeShadowsDistBtw"][0]>leftEyeShadowDistBtw and initVals["EyeShadowsDistBtw"][1]>rightEyeShadowDistBtw):            #one issue if person is shocked then it will detect as up
         cv2.putText(img, "UP", (100, 150), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255))
-        # utheta1 = math.atan()
+
 
     else:
         pass
@@ -125,7 +108,7 @@ while True:
     currFaceDist,nosemidpointCr = distDetector.Process(img)
     currFaceDist = int(currFaceDist) #cm
     cv2.putText(img, f'FACE Distance -> {currFaceDist}CM', (500, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3)
-    cv2.line(img,detector.getLandMarkOf(0,33),detector.getLandMarkOf(0,263),(0,255,0))
+    # cv2.line(img,detector.getLandMarkOf(0,33),detector.getLandMarkOf(0,263),(0,255,0))
      # cv2.line(img,ps[0],ps[1],(0,255,0))
      #
     #</face distance>#
@@ -153,11 +136,11 @@ while True:
 
     irisesMidpoint,irisesMidpointCrs = cf.findDistance(resiris[0],resiris[1])
     #for eyes up00
-    irismidupdistance,_ = cf.findDistance(irisesMidpointCrs,centerofnose) #postitive
+    irismidupdistance,_ = cf.findDistance(irisesMidpointCrs,nosemidpointCr) #postitive
     utantheta = irismidupdistance/eyestobackheaddistance
 
     estimatedUDist = int(utantheta*(eyestobackheaddistance+currFaceDist))
-    print("UP ESTIMATED  ",estimatedUDist)
+    print("UP ESTIMATED  ",utantheta," ",estimatedUDist)
     # for eyes down  #negative
 ############################################
 
