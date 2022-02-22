@@ -19,6 +19,8 @@ detector = FM.FaceDetector(refinedDetection=True)
 distDetector = distanceDetector.DistanceDetector()
 irisdetector = irisd.IrisDetector()  #coordinates(left,right) , radius(left,right)
 eyestobackheaddistance = 17.53 #avg approx. cm
+blinkdetector  = bd.BlinkDetector()
+BLINKS = [0,0] #left,right          blinked=1,notblinked=0
 
 initVals= initialState.initialstate(cam,detector,distDetector,irisdetector)
 
@@ -121,13 +123,19 @@ while True:
 
     else:
         pass
-########################################
+###########################Blink detection for clicking mouse
+    # currBlinkState = blinkdetector.Process(img)  #left,eye
+    # BLINKS[-2] = currBlinkState
+    #left eye
+        #then count - one then 1 time click
+                    #if n time then double left click or call clickleft n times
+    #right eye
+        #then count - one then 1 time click
+                    #if n time then double left click or call clickleft n times
+    #both eyes blinked - no action
 
-#####distance from nosemidpoint(reference point) to iris of both eyes individually
-    cv2.line(img, resiris[1], nosemidpointCr, (0, 255, 0))
-    cv2.line(img, resiris[0], nosemidpointCr, (0, 255, 0))
 
-    # for eyes down  #negative
+
 ############################################
 
 

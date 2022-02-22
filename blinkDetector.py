@@ -37,13 +37,13 @@ def initialState():
 class BlinkDetector():
 
     def __init__(self):
-        self.Count = [0, 0]  # leftblinkcount,rightblinkcount
+
         self.detector = FM.FaceDetector(refinedDetection=True)
         self.eyeblinkedDiffRange = range(1, 10)
         self.initialVals = initialState()
 
     def Process(self,img):
-
+        Count = [0,0]
         self.detector.Process(img)
 
         leftupperupper= self.detector.getLandMarkOf(0,257)
@@ -81,14 +81,14 @@ class BlinkDetector():
         prevldu = self.initialVals[2]
         if((prevl<leftEyeShadowDist) and (leftUpperLidLowerLidDist in self.eyeblinkedDiffRange) and (leftdownupper[1]<prevldu[1]) ):
             # cv2.putText(img,"Left Blinked",(10,10),cv2.FONT_HERSHEY_PLAIN,2,(0,255,0))
-            self.Count[0] += 1
+            Count[0] += 1
 
         #RIGHT EYE BLINK DETECTION
         prevr= self.initialVals[1]
         prevrdu = self.initialVals[3]
         if ((prevr<rightEyeShadowDist) and (rightUpperLidLowerLidDist in self.eyeblinkedDiffRange and (rightdownupper[1]<prevrdu[1]))):
             # cv2.putText(img, "Right Blinked", (10, 80), cv2.FONT_HERSHEY_PLAIN, 2, (255,0,255))
-            self.Count[1] += 1
+            Count[1] += 1
 
         #showing
         #
@@ -97,7 +97,7 @@ class BlinkDetector():
         # if cv2.waitKey(1)== ord('q'):
         #     break
         #
-        return  self.Count
+        return  Count
 
 
 
