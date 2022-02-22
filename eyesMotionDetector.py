@@ -49,15 +49,17 @@ while True:
 ##################For detection of the mid of the nose to get the reference line for left and right angle
     centerofnose= detector.getLandMarkOf(0,168)
     # cv2.circle(img,centerofnose,2,(0,0,255),-1)
-########################################################################################
-    leftmidp, leftmidpCr =cf.findDistance(detector.getLandMarkOf(0,173),detector.getLandMarkOf(0,133))
-    # cv2.circle(img,leftmidpCr,3,(122,185,135))
-
-    rightmidp, rightmidpCr = cf.findDistance(detector.getLandMarkOf(0,398), detector.getLandMarkOf(0,362))
-    # cv2.circle(img, rightmidpCr, 3, (122, 185, 135))
-
-    nosemidpoint,nosemidpointCr = cf.findDistance(leftmidpCr,rightmidpCr)
+# ########################################################################################
+#     leftmidp, leftmidpCr =cf.findDistance(detector.getLandMarkOf(0,173),detector.getLandMarkOf(0,133))
+#     # cv2.circle(img,leftmidpCr,3,(122,185,135))
+#
+#     rightmidp, rightmidpCr = cf.findDistance(detector.getLandMarkOf(0,398),detector.getLandMarkOf(0,362))
+#     # cv2.circle(img, rightmidpCr, 3, (122, 185, 135))
+#
+#     nosemidpoint,nosemidpointCr = cf.findDistance(leftmidpCr,rightmidpCr)
     # cv2.circle(img,nosemidpointCr,3,(255,0,255),1)
+
+
     ###################For detection of the up and down
 
 
@@ -74,15 +76,15 @@ while True:
     rightEyeDis,_ = cf.findDistance(rightEyeCorner,rightIrisCorner)
     # print(rightEyeDis)
 
+    #########right eye's eye shadow detection and its height variation calculated/detected
+
     leftEyeShadowUpper = detector.getLandMarkOf(0, 257)
     leftEyeShadowDown = detector.getLandMarkOf(0, 386)
-
-
     leftEyeShadowDistBtw,_ = cf.findDistance(leftEyeShadowUpper,leftEyeShadowDown)
 
 
 
-
+#########right eye's eye shadow detection and its height variation calculated/detected
     rightEyeShadowUpper = detector.getLandMarkOf(0, 27)
     rightEyeShadowDown = detector.getLandMarkOf(0, 159)
     rightEyeShadowDistBtw,_ = cf.findDistance(leftEyeShadowUpper,leftEyeShadowDown)
@@ -94,11 +96,6 @@ while True:
     cv2.circle(img, resiris[1], 2, (0, 0, 255), -1)
 
     _,eyeshadowdown = cf.findDistance(leftEyeShadowDown,rightEyeShadowDown)
-
-    movedDist,_=cf.findDistance(centerofnose,eyeshadowdown)
-    # cv2.line(img,centerofnose,eyeshadowdown,(255,255,0),2)
-    # cv2.line(img,resiris[1],centerofnose,(0,255,0))
-    # cv2.line(img,resiris[0],centerofnose,(0,255,0))
 
 
 ###############3eyes movement detection
@@ -125,15 +122,20 @@ while True:
         pass
 ########################################
     #<face distance>
-    currFaceDist,ps = distDetector.Process(img)
+    currFaceDist,nosemidpointCr = distDetector.Process(img)
     currFaceDist = int(currFaceDist) #cm
     cv2.putText(img, f'FACE Distance -> {currFaceDist}CM', (500, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 3)
-    # cv2.line(img,ps[0],ps[1],(0,255,0))
-
-
+    cv2.line(img,detector.getLandMarkOf(0,33),detector.getLandMarkOf(0,263),(0,255,0))
+     # cv2.line(img,ps[0],ps[1],(0,255,0))
+     #
     #</face distance>#
 
-##################angle between reference line 13 and iris center, for left and right eye
+    #####distance from nosemid to iris of both eyes individually
+    movedDist, _ = cf.findDistance(nosemidpointCr, eyeshadowdown)
+    cv2.line(img, resiris[1], nosemidpointCr, (0, 255, 0))
+    cv2.line(img, resiris[0], nosemidpointCr, (0, 255, 0))
+
+    ##################angle between reference line 13 and iris center, for left and right eye
 
 
 

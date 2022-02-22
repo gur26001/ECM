@@ -25,11 +25,11 @@ class DistanceDetector():
         self.detector.Process(imgRGB)
         irises = self.irisdetector.Process(img)
 
-        pointLeft = cf.findDistance(self.detector.getLandMarkOf(0,173),self.detector.getLandMarkOf(0,133))
-        pointRight =cf.findDistance(self.detector.getLandMarkOf(0,398), self.detector.getLandMarkOf(0,362))
+        _,pointLeft = cf.findDistance(self.detector.getLandMarkOf(0,173),self.detector.getLandMarkOf(0,133))
+        _,pointRight =cf.findDistance(self.detector.getLandMarkOf(0,398), self.detector.getLandMarkOf(0,362))
 
         w, cs = self.findDistance(pointLeft, pointRight) #exact between face
 
         currFaceDist = (self.W * self.f) / w
-
-        return currFaceDist,(pointLeft,pointRight)
+        # cv2.circle(img,cs,3,(255,255,0))
+        return currFaceDist,(cs)
